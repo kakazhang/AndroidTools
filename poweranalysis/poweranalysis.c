@@ -3,10 +3,13 @@
 #include <unistd.h>
 
 #define LOGPATH "/mnt/sdcard/power.txt"
+
+#define POWER_WL_PATH "/sys/power/wake_lock"
+
 #define WAKE_LOCKS "Wake Locks"
 #define SUSPENDBLOCKS "Suspend Blockers"
-
 #define DISPLAYPOWER "Display Power"
+
 #define OFF "OFF"
 
 #define LEN 256
@@ -27,9 +30,33 @@ typedef struct powerinfo {
 	int realcount;
 } powerinfo, *pinfo;
 
+static void assert(int cond, const char* msg) {
+	if (!cond) {
+		printf("%s\n", msg);
+		exit(-1);
+	}
+}
+
+static void show_kernel_wakelocks() {
+    char line[LEN] = {0};
+    FILE *fp = fopen(POWER_WL_PATH, "r");
+    if (!fp) {
+        perror("fopen");
+        return;
+    }
+
+    printf("/sys/power/wake_lock:\n");
+    while (fgets(line, LEN, fp)) 
+        printf("%s\n", line);
+
+    fclose(fp);
+}
+
 static void diagnose(pinfo info) {
 	int i;
 	if (info->state == 0) {
+        show_kernel_wakelocks();
+
 		printf("current display is blanked\n");
 		
 		printf("%s:%d\n", WAKE_LOCKS, info->wakelocks);
@@ -38,13 +65,6 @@ static void diagnose(pinfo info) {
 		for (i = 0; i < size; i++) {
 			printf("%s ref count:%d\n", info->blocks[i].name, info->blocks[i].refcount);
 		}
-	}
-}
-
-static void assert(int cond, const char* msg) {
-	if (!cond) {
-		printf("%s\n", msg);
-		exit(-1);
 	}
 }
 
