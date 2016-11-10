@@ -79,6 +79,7 @@ static void print_procs() {
                         new_procs[i]->pid, new_procs[i]->read_bytes, new_procs[i]->write_bytes,
                         new_procs[i]->speed, new_procs[i]->cmdline);
 	}
+    printf("\n");
 }
 
 static proc_info alloc_proc() {
