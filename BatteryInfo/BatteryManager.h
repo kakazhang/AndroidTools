@@ -16,7 +16,9 @@ public:
 private:
 	BatteryManager();
 	void init();
-	
+	void initCpuLoad();
+
+	int sys_write(const char* path, const char* s);
 private:
 	static pthread_mutex_t gLock;
 	static sp<BatteryManager> gInstance;
