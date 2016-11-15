@@ -1,0 +1,27 @@
+#!/bin/bash 
+CURR=$(pwd)
+
+dirs=$(ls)
+
+count=0
+
+for de in $dirs
+do
+    if [ ! -d $de ];then
+         continue;
+    fi
+
+    cd ${CURR}/${de}
+    
+
+    lines=$(wc -l * | grep total | awk '{print $1}')
+
+    if [ "x$lines" == "x" ];then
+        lines=$(wc -l * | awk '{print $1}')
+    fi
+    #echo "$de:$lines"
+    count=$((count+lines))
+    cd $CURR
+done
+
+echo "total:$count lines"
