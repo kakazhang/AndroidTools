@@ -18,7 +18,7 @@
 #define CMDLINE "/proc/%d/cmdline"
 #define PROCFD "/proc/%d/fd/"
 
-#define SLEEP_TIMEOUT  15*60
+#define SLEEP_TIMEOUT  30*60
 
 #define PATHLEN 64
 #define CMDLEN 64
