@@ -1,33 +1,32 @@
-#include <iostream>
-#include <map>
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <cutils/sockets.h>
+#include <cutils/log.h>
 
 #include "ICommand.h"
 #include "Commands.h"
 
-using namespace std;
-#if 1
-//static map<string, ICommand*> mCommands;
+#define BUFFER_MAX    1024
+#define SOCKET_PATH "optimise"
+
+//using namespace android;
+
 static ICommand* cpufreq = NULL;
 static ICommand* cgroup = NULL;
 void __attribute__((constructor)) init() {
-#if 0
-	string cpufreqName("cpufreq");
-	CpufreqCmd* cpufreq = new CpufreqCmd(cpufreqName.c_str());
-
-	mCommands[cpufreqName] = cpufreq;
-#endif
     cpufreq = new CpufreqCmd("cpufreq");
     cgroup = new CgroupCmd("cgroup");
 }
 
-void __attribute((destructor)) destroy() {
+void __attribute__((destructor)) destroy() {
     if (cpufreq)
 		delete cpufreq;
 
 	if (cgroup)
 		delete cgroup;
 }
-#endif
 
 int parse(char* msg, char **args, int len) {
     const char* delim = " ";
@@ -37,7 +36,6 @@ int parse(char* msg, char **args, int len) {
 	args[count++] = strdup(str);
 	
 	while(str != NULL) {
-	  cout<< str << endl;
 	  str = strtok(NULL, delim);
 	  if (str)
 	      args[count++] = strdup(str);
@@ -49,27 +47,101 @@ int parse(char* msg, char **args, int len) {
     return count;
 }
 
-int main(int argc, char** argv) {
-    if (argc < 4) {
-        cout << "input at least 3 arguments" << endl;
-		return -1;
-	}
+static int writex(int s, const void *_buf, int count) {
+    const char *buf =(const char*) _buf;
+    int n = 0, r;
+    if (count < 0) return -1;
+    while (n < count) {
+        r = write(s, buf + n, count - n);
+        if (r < 0) {
+            if (errno == EINTR) continue;
+            ALOGE("write error: %s\n", strerror(errno));
+            return -1;
+        }
+        n += r;
+    }
+    return 0;
+}
 
-	char msg[] = {"cpufreq governor performance"};
-	int len = 3;
-    char *args[3];
-
-	parse(msg, args, len);
-	for (int i = 0; i < len; i++) {
-		if (args[i])
-            free(args[i]);
-	}
+static int execute(char msg[BUFFER_MAX], const int count) {
+    int argc = count;
+	char *argv[count];
 	
-	if (!strcmp(argv[1], cpufreq->getCmdName()))
+	parse(msg, argv, argc);
+
+	if (!strcmp(argv[0], cpufreq->getCmdName()))
 		cpufreq->onCommand(argc,argv);
-    else if (!strcmp(argv[1], cgroup->getCmdName()))
+	else if (!strcmp(argv[0], cgroup->getCmdName()))
 		cgroup->onCommand(argc, argv);
-	
+
+    for (int i = 0; i < count; i++) {
+		if (argv[i])
+            free(argv[i]);
+	}
+
 	return 0;
 }
 
+int main(int argc, char** argv) {
+    char buf[BUFFER_MAX];
+    struct sockaddr addr;
+    socklen_t alen;
+	int lsocket, s;
+	int size;
+	const int LEN = sizeof(int);
+
+    lsocket = android_get_control_socket(SOCKET_PATH);
+    if (lsocket < 0) {
+        ALOGE("Failed to get socket from environment: %s\n", strerror(errno));
+    } else {
+       lsocket = socket_local_server(SOCKET_PATH, ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);
+	   if (lsocket < 0) {
+           ALOGE("socket create failed");
+		   exit(-1);
+	   }
+	}
+	
+    if (listen(lsocket, 5)) {
+        ALOGE("Listen on socket failed: %s\n", strerror(errno));
+        exit(1);
+    }
+
+    fcntl(lsocket, F_SETFD, FD_CLOEXEC);
+
+    for (;;) {
+        alen = sizeof(addr);
+        s = accept(lsocket, &addr, &alen);
+        if (s < 0) {
+            ALOGE("Accept failed: %s\n", strerror(errno));
+            continue;
+        }
+        fcntl(s, F_SETFD, FD_CLOEXEC);
+
+        ALOGD("new connection\n");
+        for (;;) {
+            char line[LEN] = {0};
+            if (read(s, line, LEN) < 0) {
+                ALOGE("failed to read size\n");
+                break;
+            }
+
+			int count = atoi(line);
+            if ((count < 1) || (count >= BUFFER_MAX)) {
+                ALOGE("invalid size %d\n", count);
+                break;
+            }
+			
+            if ((size=read(s, buf, sizeof(buf))) < 0) {
+                ALOGE("failed to read command\n");
+                break;
+            }
+            buf[size] = 0;
+            ALOGD("cmd:%s\n", buf);
+            if (execute(buf, count)) break;
+        }
+        ALOGE("closing connection\n");
+        close(s);
+    }
+
+	return 0;
+}

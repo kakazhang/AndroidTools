@@ -10,7 +10,7 @@ LOCAL_CFLAGS += -std=gnu++11
 
 LOCAL_SRC_FILES := \
 	main.cpp \
-        Commands.cpp
+    Commands.cpp
 
 LOCAL_SHARED_LIBRARIES += \
 	libcutils \

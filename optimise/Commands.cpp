@@ -26,10 +26,10 @@ CpufreqCmd::~CpufreqCmd() {
 
 void CpufreqCmd::onCommand(int argc, char *args[]) {
     int ret = 0;
-    if (!strcmp(args[2], GOVERNOR)) {
+    if (!strcmp(args[1], GOVERNOR)) {
         changeGovernor(argc, args);
 		return;
-    } else if (!strcmp(args[2], GO_MINSPEED_LOAD)) {
+    } else if (!strcmp(args[1], GO_MINSPEED_LOAD)) {
         tuneMinspeedLoad(argc, args);
         return;
     }
@@ -40,12 +40,13 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
     char buf[12] = {0};
     const char *scaling_governor = "/sys/devices/system/cpu/cpu0/cpufreq/scaling_governor";
     FILE* fp = NULL;
-
-    if (argc != 4) {
+    char *governor;
+    if (argc != 3) {
          cout << "change governor need only 3 arguments" << endl;
          return -1;
     }
-    
+
+	governor = args[2];
     fp = fopen(scaling_governor, "r+");
     if (fp == NULL) {
        perror("fopen");
@@ -59,13 +60,13 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
         return -1;
     }
 
-    if (!strcmp(args[3], buf)) {
+    if (!strcmp(governor, buf)) {
          cout << "same governor, no need to change" << endl;
          fclose(fp);
          return 0; 
     }
 
-    ret = fwrite(args[3], 1, strlen(args[3]), fp);
+    ret = fwrite(governor, 1, strlen(governor), fp);
     if (ret < 0) {
         perror("fwrite");
 		fclose(fp);
@@ -78,13 +79,13 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
 
 int CpufreqCmd::tuneMinspeedLoad(int argc, char **args) {
     int ret = 0;
-    if (argc != 4) {
+    if (argc != 3) {
          cout << "tune minspeed load need only 4 arguments" << endl;
          return -1;
     }
 
     const char *minload = "/sys/devices/system/cpu/cpufreq/interactive/go_minspeed_load";
-    char *load = args[3];
+    char *load = args[2];
 
     int fd = open(minload, O_WRONLY);
     if (fd < 0) {
@@ -112,22 +113,25 @@ CgroupCmd::~CgroupCmd() {
 }
 
 void CgroupCmd::onCommand(int argc, char *args[]) {
-    if (!strcmp(args[2], LIMITMEMORY)) {
+    if (!strcmp(args[1], LIMITMEMORY)) {
         tuneLimitMemory(argc, args);
 	}
 }
 
 int CgroupCmd::tuneLimitMemory(int argc, char **args) {
     int ret = 0;
-    if (argc != 4) {
+    if (argc != 3) {
          cout << "tune minspeed load need only 4 arguments" << endl;
          return -1;
     }
 
     const char* limit = "/sys/fs/cgroup/memory/limit/memory.limit_in_bytes";
+	char* memory = args[2];
+
 	FILE* fp = fopen(limit, "r+");
+
+	ret = fwrite(memory, 1, strlen(memory), fp);
 	
-    ret = fwrite(args[3], 1, strlen(args[3]), fp);
     if (ret < 0) {
         perror("fwrite");
 		fclose(fp);
