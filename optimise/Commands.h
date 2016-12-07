@@ -29,4 +29,14 @@ private:
     int tuneLimitMemory(int argc, char **args);
 };
 
+class ReclaimCmd : public ICommand {
+public:
+    ReclaimCmd(const char* cmd);
+    virtual ~ReclaimCmd();
+
+    virtual void onCommand(int argc, char *args[]);
+private:
+    void forceReclaim(int argc, char **args);
+};
+
 #endif

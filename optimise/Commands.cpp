@@ -1,9 +1,14 @@
+#define LOG_TAG "Commands"
+
 #include <iostream>
 #include <stdio.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <utils/Log.h>
+#include <string.h>
+#include <errno.h>
 
 #include "Commands.h"
 
@@ -11,7 +16,7 @@
 #define GOVERNOR "governor"
 
 #define LIMITMEMORY "limit"
-
+#define FORCERECLAIM "reclaim"
 using namespace std;
 
 //CPufreqCmd used for tune cpufreq
@@ -55,7 +60,7 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
     
     ret = fread(buf, 1,  sizeof(buf), fp);
     if (ret < 0) {
-        perror("fread");
+        ALOGE("%s\n", strerror(errno));
         fclose(fp);
         return -1;
     }
@@ -68,7 +73,7 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
 
     ret = fwrite(governor, 1, strlen(governor), fp);
     if (ret < 0) {
-        perror("fwrite");
+        ALOGE("%s\n", strerror(errno));
 		fclose(fp);
         return -1;
     }
@@ -89,13 +94,13 @@ int CpufreqCmd::tuneMinspeedLoad(int argc, char **args) {
 
     int fd = open(minload, O_WRONLY);
     if (fd < 0) {
-         perror("open");
+        ALOGE("%s\n", strerror(errno));
          return -1;
     }
 
     ret = write(fd, load, strlen(load));    
     if (ret < 0) {
-        perror("write");
+        ALOGE("%s\n", strerror(errno));
     }
 
     close(fd);
@@ -133,11 +138,45 @@ int CgroupCmd::tuneLimitMemory(int argc, char **args) {
 	ret = fwrite(memory, 1, strlen(memory), fp);
 	
     if (ret < 0) {
-        perror("fwrite");
+        ALOGE("%s\n", strerror(errno));
+
 		fclose(fp);
         return -1;
     }
 
 	fclose(fp);
 	return 0;
+}
+
+ReclaimCmd::ReclaimCmd(const char* cmd) 
+	:ICommand(cmd) {
+
+}
+
+ReclaimCmd::~ReclaimCmd() {
+}
+
+void ReclaimCmd::onCommand(int argc, char *args[]) {
+    if (!strcmp(args[1], FORCERECLAIM))
+	    forceReclaim(argc, args);
+}
+
+void ReclaimCmd::forceReclaim(int argc, char **args) {
+	char reclaim[] = {"1"};
+    char filename[32];
+
+	if (argc != 2)
+		return;
+
+    snprintf(filename, sizeof(filename), "/proc/%s/reclaim", args[1]);
+
+    FILE * file = fopen(filename, "w+");
+    if (!file) {
+		ALOGD("open %s failed\n", filename);
+        return;
+    }
+
+    int ret = fwrite(reclaim, sizeof(char), strlen(reclaim), file);
+    ALOGD("force reclaim return:%d\n", ret);
+	fclose(file);
 }

@@ -1,9 +1,14 @@
+#define LOG_TAG "Commands"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <cutils/sockets.h>
 #include <cutils/log.h>
+#include <sys/stat.h>
+#include <errno.h>
+ #include <string.h>
 
 #include "ICommand.h"
 #include "Commands.h"
@@ -15,6 +20,7 @@
 
 static ICommand* cpufreq = NULL;
 static ICommand* cgroup = NULL;
+static ICommand* reclaim = NULL;
 void __attribute__((constructor)) init() {
     cpufreq = new CpufreqCmd("cpufreq");
     cgroup = new CgroupCmd("cgroup");
@@ -73,13 +79,19 @@ static int execute(char msg[BUFFER_MAX], const int count) {
 		cpufreq->onCommand(argc,argv);
 	else if (!strcmp(argv[0], cgroup->getCmdName()))
 		cgroup->onCommand(argc, argv);
-
+    else if (!strcmp(argv[0], reclaim->getCmdName()))
+		reclaim->onCommand(argc, argv);
+	
     for (int i = 0; i < count; i++) {
 		if (argv[i])
             free(argv[i]);
 	}
 
 	return 0;
+}
+
+int change_mode(int mode) {
+    return chmod("/dev/socket/optimise", mode);
 }
 
 int main(int argc, char** argv) {
@@ -89,6 +101,12 @@ int main(int argc, char** argv) {
 	int lsocket, s;
 	int size;
 	const int LEN = sizeof(int);
+
+    int mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP;
+    if (change_mode(mode)) {
+        ALOGE("%s\n", strerror(errno));
+        return -1;
+    }
 
     lsocket = android_get_control_socket(SOCKET_PATH);
     if (lsocket < 0) {
