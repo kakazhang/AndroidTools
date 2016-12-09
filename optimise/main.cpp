@@ -24,6 +24,7 @@ static ICommand* reclaim = NULL;
 void __attribute__((constructor)) init() {
     cpufreq = new CpufreqCmd("cpufreq");
     cgroup = new CgroupCmd("cgroup");
+    reclaim = new ReclaimCmd("reclaim");
 }
 
 void __attribute__((destructor)) destroy() {
@@ -32,6 +33,9 @@ void __attribute__((destructor)) destroy() {
 
 	if (cgroup)
 		delete cgroup;
+
+    if (reclaim)
+        delete reclaim;
 }
 
 int parse(char* msg, char **args, int len) {
@@ -103,10 +107,12 @@ int main(int argc, char** argv) {
 	const int LEN = sizeof(int);
 
     int mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP;
+#if 0    
     if (change_mode(mode)) {
         ALOGE("%s\n", strerror(errno));
         return -1;
     }
+#endif
 
     lsocket = android_get_control_socket(SOCKET_PATH);
     if (lsocket < 0) {
