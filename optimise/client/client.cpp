@@ -7,7 +7,8 @@
 int main() {
     int sock;
     char final_cmd[255] = "0";
-    char buf[8] = {0};
+    const int LEN = sizeof(int);
+    char buf[LEN] = {0};
     int count;
 
     strcpy(final_cmd, "cpufreq governor performance");
@@ -15,14 +16,15 @@ int main() {
     sock = socket_local_client("optimise", ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);
     if (sock < 0) {
        printf("socket_local_client failed\n");
+       perror("socket_local_client");
        return -1;
     }
 
     count = snprintf(buf, sizeof(buf), "%d", 3);
-    int ret = write(sock, buf, count);
+    int ret = write(sock, buf, LEN);
     if (ret < 0) {
         perror("write");
-	return -1;
+	    return -1;
     }
 	
     ret = write(sock, final_cmd, strlen(final_cmd));
