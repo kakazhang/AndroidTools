@@ -105,14 +105,7 @@ int main(int argc, char** argv) {
 	int lsocket, s;
 	int size;
 	const int LEN = sizeof(int);
-
-    int mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP;
-#if 0    
-    if (change_mode(mode)) {
-        ALOGE("%s\n", strerror(errno));
-        return -1;
-    }
-#endif
+    int mode = S_IRUSR|S_IWUSR|S_IRGRP|S_IWGRP|S_IROTH | S_IWOTH;
 
     lsocket = android_get_control_socket(SOCKET_PATH);
     if (lsocket < 0) {
@@ -125,6 +118,11 @@ int main(int argc, char** argv) {
 	   }
 	}
 	
+    if (change_mode(mode)) {
+        ALOGE("%s\n", strerror(errno));
+        return -1;
+    }
+
     if (listen(lsocket, 5)) {
         ALOGE("Listen on socket failed: %s\n", strerror(errno));
         exit(1);
