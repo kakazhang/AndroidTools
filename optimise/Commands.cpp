@@ -157,7 +157,8 @@ ReclaimCmd::~ReclaimCmd() {
 }
 
 void ReclaimCmd::onCommand(int argc, char *args[]) {
-    if (!strcmp(args[1], FORCERECLAIM))
+	//only two arguments, and args[0] is reclaim,then just reclaim it
+    if (argc == 2 && !strcmp(args[0], FORCERECLAIM))
 	    forceReclaim(argc, args);
 }
 
@@ -170,7 +171,7 @@ void ReclaimCmd::forceReclaim(int argc, char **args) {
 
     snprintf(filename, sizeof(filename), "/proc/%s/reclaim", args[1]);
 
-    FILE * file = fopen(filename, "w+");
+    FILE * file = fopen(filename, "w");
     if (!file) {
 		ALOGD("open %s failed\n", filename);
         return;

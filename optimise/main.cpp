@@ -78,6 +78,7 @@ static int execute(char msg[BUFFER_MAX], const int count) {
 	char *argv[count];
 	
 	parse(msg, argv, argc);
+	ALOGE("args[0]:%s\n", argv[0]);
 
 	if (!strcmp(argv[0], cpufreq->getCmdName()))
 		cpufreq->onCommand(argc,argv);
@@ -152,7 +153,7 @@ int main(int argc, char** argv) {
                 ALOGE("invalid size %d\n", count);
                 break;
             }
-			
+            memset(buf, 0, sizeof(buf));
             if ((size=read(s, buf, sizeof(buf))) < 0) {
                 ALOGE("failed to read command\n");
                 break;
