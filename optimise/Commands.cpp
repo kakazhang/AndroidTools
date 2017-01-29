@@ -12,6 +12,7 @@
 
 #include "Commands.h"
 
+#define BLKIO_LIMIT_WEIGHT "/sys/fs/cgroup/blkio/limit/blkio.weight"
 #define BLKIO_LIMIT "/sys/fs/cgroup/blkio/limit/tasks"
 #define BLKIO_NORMAL "/sys/fs/cgroup/blkio/tasks"
 
@@ -119,6 +120,13 @@ CgroupCmd::CgroupCmd(const char* cmd)
 	:ICommand(cmd) {
 	if (access("/sys/fs/cgroup/blkio/limit/tasks", F_OK)) {
 		mkdir("/sys/fs/cgroup/blkio/limit", 0750);
+
+		FILE* fp = fopen(BLKIO_LIMIT_WEIGHT, "r+");
+		if (fp != NULL) {
+			char limit_weight[] = {"200"};
+            int ret = fwrite(limit_weight, sizeof(char), strlen(limit_weight), fp);
+			fclose(fp);
+		}
 	}
 }
 
