@@ -12,10 +12,17 @@
 
 #include "Commands.h"
 
+#define BLKIO_LIMIT "/sys/fs/cgroup/blkio/limit/tasks"
+#define BLKIO_NORMAL "/sys/fs/cgroup/blkio/tasks"
+
 #define GO_MINSPEED_LOAD "minspeedload"
 #define GOVERNOR "governor"
 
 #define LIMITMEMORY "limit"
+
+#define CGROUP_BLKIO "blkio"
+#define CGROUP_REDUCE "reduce"
+
 #define FORCERECLAIM "reclaim"
 using namespace std;
 
@@ -85,7 +92,7 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
 int CpufreqCmd::tuneMinspeedLoad(int argc, char **args) {
     int ret = 0;
     if (argc != 3) {
-         cout << "tune minspeed load need only 4 arguments" << endl;
+         cout << "tune minspeed load need only 3 arguments" << endl;
          return -1;
     }
 
@@ -110,7 +117,9 @@ int CpufreqCmd::tuneMinspeedLoad(int argc, char **args) {
 
 CgroupCmd::CgroupCmd(const char* cmd)
 	:ICommand(cmd) {
-
+	if (access("/sys/fs/cgroup/blkio/limit/tasks", F_OK)) {
+		mkdir("/sys/fs/cgroup/blkio/limit", 0750);
+	}
 }
 
 CgroupCmd::~CgroupCmd() {
@@ -120,13 +129,17 @@ CgroupCmd::~CgroupCmd() {
 void CgroupCmd::onCommand(int argc, char *args[]) {
     if (!strcmp(args[1], LIMITMEMORY)) {
         tuneLimitMemory(argc, args);
+	} else if (!strcmp(args[1], CGROUP_BLKIO)) {
+        tuneBlkio(argc, args, 0);
+	} else if (!strcmp(args[1], CGROUP_REDUCE)) {
+        tuneBlkio(argc, args, 1);
 	}
 }
 
 int CgroupCmd::tuneLimitMemory(int argc, char **args) {
     int ret = 0;
     if (argc != 3) {
-         cout << "tune minspeed load need only 4 arguments" << endl;
+         cout << "tune minspeed load need only 3 arguments" << endl;
          return -1;
     }
 
@@ -146,6 +159,36 @@ int CgroupCmd::tuneLimitMemory(int argc, char **args) {
 
 	fclose(fp);
 	return 0;
+}
+
+int CgroupCmd::tuneBlkio(int argc, char **args, int reduce) {
+    int ret = 0;
+    FILE* fp = NULL;
+	char* pidstr = args[2];
+
+    if (argc != 3) {
+         cout << "tune minspeed load need only 3 arguments" << endl;
+         return -1;
+    }
+
+    if (reduce) {
+        fp = fopen(BLKIO_LIMIT, "r+");
+    } else {
+	    fp = fopen(BLKIO_NORMAL, "r+");
+    }
+
+    if (fp == NULL) {
+        ALOGE("%s\n", strerror(errno));
+		return -1;
+	}
+
+    ret = fwrite(pidstr, 1, strlen(pidstr), fp);
+    if (ret < 0) {
+        ALOGE("%s\n", strerror(errno));
+    }
+
+	fclose(fp);
+	return ret;
 }
 
 ReclaimCmd::ReclaimCmd(const char* cmd) 

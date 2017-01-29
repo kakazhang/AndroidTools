@@ -7,6 +7,7 @@ LOCAL_MODULE := Optimise
 LOCAL_MODULE_TAGS := optional
 
 LOCAL_CFLAGS += -std=gnu++11
+LOCAL_CFLAGS += -W
 
 LOCAL_SRC_FILES := \
 	main.cpp \

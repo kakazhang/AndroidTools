@@ -140,7 +140,7 @@ int main(int argc, char** argv) {
         }
         fcntl(s, F_SETFD, FD_CLOEXEC);
 
-        ALOGD("new connection\n");
+        //ALOGD("new connection\n");
         for (;;) {
             char line[LEN] = {0};
             if (read(s, line, LEN) < 0) {
@@ -162,7 +162,7 @@ int main(int argc, char** argv) {
             ALOGD("cmd:%s\n", buf);
             if (execute(buf, count)) break;
         }
-        ALOGE("closing connection\n");
+        //ALOGE("closing connection\n");
         close(s);
     }
 

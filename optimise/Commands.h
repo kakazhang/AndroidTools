@@ -27,6 +27,7 @@ public:
     virtual void onCommand(int argc, char *args[]);
 private:
     int tuneLimitMemory(int argc, char **args);
+	int tuneBlkio(int argc, char **args, int reduce);
 };
 
 class ReclaimCmd : public ICommand {
