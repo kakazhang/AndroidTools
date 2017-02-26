@@ -40,4 +40,14 @@ private:
     void forceReclaim(int argc, char **args);
 };
 
+class SchedCmd : public ICommand {
+public:
+    SchedCmd(const char* cmd);
+    virtual ~SchedCmd();
+
+    virtual void onCommand(int argc, char *args[]);
+private:
+    void setPrio(int argc, char **args);
+};
+
 #endif

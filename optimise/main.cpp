@@ -21,10 +21,13 @@
 static ICommand* cpufreq = NULL;
 static ICommand* cgroup = NULL;
 static ICommand* reclaim = NULL;
+static ICommand* scheds = NULL;
+
 void __attribute__((constructor)) init() {
     cpufreq = new CpufreqCmd("cpufreq");
     cgroup = new CgroupCmd("cgroup");
     reclaim = new ReclaimCmd("reclaim");
+	scheds = new SchedCmd("sched");
 }
 
 void __attribute__((destructor)) destroy() {
@@ -36,6 +39,9 @@ void __attribute__((destructor)) destroy() {
 
     if (reclaim)
         delete reclaim;
+
+    if (scheds)
+        delete scheds;
 }
 
 int parse(char* msg, char **args, int len) {
@@ -86,7 +92,9 @@ static int execute(char msg[BUFFER_MAX], const int count) {
 		cgroup->onCommand(argc, argv);
     else if (!strcmp(argv[0], reclaim->getCmdName()))
 		reclaim->onCommand(argc, argv);
-	
+	else if (!strcmp(argv[0], scheds->getCmdName()))
+		scheds->onCommand(argc, argv);
+
     for (int i = 0; i < count; i++) {
 		if (argv[i])
             free(argv[i]);

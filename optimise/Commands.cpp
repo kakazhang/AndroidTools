@@ -9,6 +9,9 @@
 #include <utils/Log.h>
 #include <string.h>
 #include <errno.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <unistd.h>
 
 #include "Commands.h"
 
@@ -25,6 +28,9 @@
 #define CGROUP_REDUCE "reduce"
 
 #define FORCERECLAIM "reclaim"
+
+#define SETPRIO "setprio"
+
 using namespace std;
 
 //CPufreqCmd used for tune cpufreq
@@ -232,3 +238,32 @@ void ReclaimCmd::forceReclaim(int argc, char **args) {
     ALOGD("force reclaim return:%d\n", ret);
 	fclose(file);
 }
+
+SchedCmd::SchedCmd(const char* cmd)
+    :ICommand(cmd) {
+}
+SchedCmd::~SchedCmd() {
+}
+
+void SchedCmd::onCommand(int argc, char *args[]) {
+    if (!strcmp(args[1], SETPRIO)) {
+        setPrio(argc, args);
+    }
+}
+
+void SchedCmd::setPrio(int argc, char **args) {
+   if (argc != 4) {
+       ALOGE("setPrio need only 4 arguments\n");
+       return;
+   }
+
+   int ret = 0;
+   int pid = atoi(args[2]);
+   int prio = atoi(args[3]);
+
+   ret = setpriority(PRIO_PROCESS, pid, prio);
+   if (ret) {
+       ALOGE("setpriority:%s\n", strerror(errno));
+   }
+}
+
