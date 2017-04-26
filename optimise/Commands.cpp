@@ -252,6 +252,7 @@ void SchedCmd::onCommand(int argc, char *args[]) {
 }
 
 void SchedCmd::setPrio(int argc, char **args) {
+#if 0
    if (argc != 4) {
        ALOGE("setPrio need only 4 arguments\n");
        return;
@@ -265,5 +266,6 @@ void SchedCmd::setPrio(int argc, char **args) {
    if (ret) {
        ALOGE("setpriority:%s\n", strerror(errno));
    }
+#endif
 }
 
