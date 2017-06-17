@@ -21,10 +21,10 @@ LOCAL_SHARED_LIBRARIES += \
 #add debug flag
 ifeq ($(TARGET_PRODUCT),aosp_bullhead)
     LOCAL_CFLAGS += -DAOSP_BULLHEAD
-
-#	libstlport
-
-#LOCAL_C_INCLUDES += bionic external/stlport/stlport
+else
+    LOCAL_SHARED_LIBRARIES += libstlport
+    LOCAL_C_INCLUDES += bionic external/stlport/stlport
+endif
 
 include $(BUILD_EXECUTABLE)
 

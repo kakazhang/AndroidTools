@@ -11,8 +11,8 @@ int main() {
     char buf[LEN] = {0};
     int count;
 
-    strcpy(final_cmd, "cpufreq governor performance");
-    
+    //strcpy(final_cmd, "cpufreq governor performance");
+    strcpy(final_cmd, "cgroup limit 256M");
     sock = socket_local_client("optimise", ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);
     if (sock < 0) {
        printf("socket_local_client failed\n");

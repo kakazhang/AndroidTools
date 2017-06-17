@@ -13,10 +13,12 @@ LOCAL_SRC_FILES := \
 
 LOCAL_SHARED_LIBRARIES += \
 	libcutils \
-	libutils \
-	libstlport
+	libutils
 
-LOCAL_C_INCLUDES += bionic external/stlport/stlport
+ifeq ($(TARGET_PRODUCT),aosp_grouper)
+	LOCAL_SHARED_LIBRARIES += libstlport
+        LOCAL_C_INCLUDES += bionic external/stlport/stlport
+endif
 
 include $(BUILD_EXECUTABLE)
 
