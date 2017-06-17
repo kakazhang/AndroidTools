@@ -16,8 +16,6 @@
 #define BUFFER_MAX    1024
 #define SOCKET_PATH "optimise"
 
-//using namespace android;
-
 static ICommand* cpufreq = NULL;
 static ICommand* cgroup = NULL;
 static ICommand* reclaim = NULL;
@@ -119,14 +117,13 @@ int main(int argc, char** argv) {
     lsocket = android_get_control_socket(SOCKET_PATH);
     if (lsocket < 0) {
         ALOGE("Failed to get socket from environment: %s\n", strerror(errno));
-    } else {
-       lsocket = socket_local_server(SOCKET_PATH, ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);
-	   if (lsocket < 0) {
+        lsocket = socket_local_server(SOCKET_PATH, ANDROID_SOCKET_NAMESPACE_RESERVED, SOCK_STREAM);
+	    if (lsocket < 0) {
            ALOGE("socket create failed");
-		   exit(-1);
-	   }
+		    exit(-1);
+	    }
 	}
-	
+
     if (change_mode(mode)) {
         ALOGE("%s\n", strerror(errno));
         return -1;

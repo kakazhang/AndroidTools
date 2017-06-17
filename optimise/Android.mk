@@ -16,10 +16,15 @@ LOCAL_SRC_FILES := \
 LOCAL_SHARED_LIBRARIES += \
 	libcutils \
 	libutils \
-	libbinder \
-	libstlport
+	libbinder
 
-LOCAL_C_INCLUDES += bionic external/stlport/stlport
+#add debug flag
+ifeq ($(TARGET_PRODUCT),aosp_bullhead)
+    LOCAL_CFLAGS += -DAOSP_BULLHEAD
+
+#	libstlport
+
+#LOCAL_C_INCLUDES += bionic external/stlport/stlport
 
 include $(BUILD_EXECUTABLE)
 
