@@ -29,6 +29,7 @@
 #define PATH_CPU_GO_MINSPEED_LOAD "/sys/devices/system/cpu/cpufreq/interactive/go_minspeed_load"
 //cgroup
 #ifdef AOSP_BULLHEAD
+#define PATH_POWER_CPU_GOVERNOR "/sys/devices/system/cpu/cpu4/cpufreq/scaling_governor"
 #define PATH_LIMIT_MEMORY "/dev/memcg/apps/memory.limit_in_bytes"
 #define BLKIO_LIMIT_WEIGHT "/dev/blkio/blkio.weight"
 #define BLKIO_LIMIT "/dev/blkio/limit/tasks"
@@ -189,7 +190,13 @@ int CpufreqCmd::changeGovernor(int argc, char **args) {
          return -1;
     }
 
-    return setValue(path, value);
+    ret = setValue(path, value);
+#ifdef AOSP_BULLHEAD
+    if (ret > 0) {
+        ret = setValue(PATH_POWER_CPU_GOVERNOR, value);
+    }
+#endif
+    return ret;
 }
 
 /**
@@ -310,11 +317,11 @@ void ReclaimCmd::forceReclaim(int argc, char **args) {
 		return;
 #ifdef AOSP_BULLHEAD
     long freeMem = getFreeMemory();
-    if (400 * _1M < freeMem && freeMem < 500 * _1M)
+    if (500 * _1M < freeMem && freeMem < 600 * _1M)
        strncpy(reclaim, CLEAR_REFS_ANON, strlen(CLEAR_REFS_ANON) + 1);
-    else if (300 * _1M < freeMem && freeMem <= 400 * _1M)
+    else if (400 * _1M < freeMem && freeMem <= 500 * _1M)
        strncpy(reclaim, CLEAR_REFS_MAPPED, strlen(CLEAR_REFS_MAPPED) + 1);
-    else if (freeMem <= 300*_1M)
+    else if (freeMem <= 400 *_1M)
        strncpy(reclaim, CLEAR_REFS_ALL, strlen(CLEAR_REFS_ALL) + 1);
 
     //snprintf(filename, sizeof(filename), "/proc/%s/clear_refs", args[1]);
