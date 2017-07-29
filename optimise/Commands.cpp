@@ -317,14 +317,12 @@ void ReclaimCmd::forceReclaim(int argc, char **args) {
 		return;
 #ifdef AOSP_BULLHEAD
     long freeMem = getFreeMemory();
-    if (500 * _1M < freeMem && freeMem < 600 * _1M)
+    if (600 * _1M < freeMem && freeMem < 900 * _1M)
        strncpy(reclaim, CLEAR_REFS_ANON, strlen(CLEAR_REFS_ANON) + 1);
-    else if (400 * _1M < freeMem && freeMem <= 500 * _1M)
+    else if (300 * _1M < freeMem && freeMem <= 600 * _1M)
        strncpy(reclaim, CLEAR_REFS_MAPPED, strlen(CLEAR_REFS_MAPPED) + 1);
     else if (freeMem <= 400 *_1M)
        strncpy(reclaim, CLEAR_REFS_ALL, strlen(CLEAR_REFS_ALL) + 1);
-
-    //snprintf(filename, sizeof(filename), "/proc/%s/clear_refs", args[1]);
 #endif
     snprintf(filename, sizeof(filename), "/proc/%s/reclaim", args[1]);
     ALOGE("filename:%s\n", filename);
