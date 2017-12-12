@@ -27,11 +27,11 @@ int main(int argc, char** argv) {
 
     player->prepare();
 
-	sleep(10);
+    sleep(10);
 
-	player->pause();
-	sleep(2);
-	player->start();
+    //player->pause();
+    //sleep(2);
+    player->start();
     IPCThreadState::self()->joinThreadPool();
 
     return 0;
