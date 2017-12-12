@@ -1,11 +1,13 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
 
 #include "recorder.h"
 
 using namespace android;
 
-RecorderHandler::RecorderHandler(sp<MediaRecorder>& recorder) {
+RecorderHandler::RecorderHandler(sp<MediaRecorder>& recorder, String8& output) 
+  :mOutput(output) {
     mRecorder = recorder;
     mLooper = new Looper(false);
 }
@@ -21,9 +23,15 @@ void RecorderHandler::startRecord() {
     mRecorder->setOutputFormat(1);
     //3gp
     mRecorder->setAudioEncoder(1);
+	
+	//set max file size
+    char params[64];
+    sprintf(params, "max-filesize=%" PRId64, 100*1024);
+
+    mRecorder->setParameters(String8(params));
 	///sdcard/
-    //mRecorder->setOutputFile("/sdcard/test.3gp");
-    fd = open("/sdcard/test.3gp", O_CREAT|O_RDWR);
+    const char* name = mOutput.string();
+    fd = open(name, O_CREAT|O_RDWR);
     if (fd < 0) {
         perror("open");
         exit(-1);
@@ -60,9 +68,9 @@ bool RecorderHandler::threadLoop() {
     return true;
 }
 
-Recorder::Recorder() {
+Recorder::Recorder(String8& output) {
     sp<MediaRecorder> recorder = new MediaRecorder(String16("kaka"));
-    mHandler = new RecorderHandler(recorder);
+    mHandler = new RecorderHandler(recorder, output);
     mHandler->run("Recorder");
     mStart = false;
 }

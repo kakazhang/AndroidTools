@@ -12,6 +12,7 @@
 #include <utils/Log.h>
 #include <utils/Looper.h>
 #include <utils/threads.h>
+#include <utils/String8.h>
 
 using namespace android;
 enum {
@@ -21,7 +22,7 @@ enum {
 
 class RecorderHandler : public MessageHandler, public Thread {
 public:
-	RecorderHandler(sp<MediaRecorder>& recorder);
+	RecorderHandler(sp<MediaRecorder>& recorder, String8& output);
 	virtual ~RecorderHandler();
 	virtual void handleMessage(const Message& message);
 
@@ -32,13 +33,15 @@ private:
     void startRecord();
 private:
     int fd;
+    String8& mOutput;
+
 	sp<MediaRecorder> mRecorder;
 	sp<Looper> mLooper;
 };
 
 class Recorder : public RefBase {
 public:
-    Recorder();
+    Recorder(String8& output);
     virtual ~Recorder();
 
     void start();
@@ -47,6 +50,7 @@ public:
     void setStatus(int start) {
         mStart = start;
     }
+
 private:
     volatile bool mStart;
 	sp<RecorderHandler> mHandler;

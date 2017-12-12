@@ -3,7 +3,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE := Recorder
+LOCAL_MODULE := myRecorder
 
 LOCAL_MODULE_TAGS := optional
 
