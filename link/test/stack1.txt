@@ -1,0 +1,93 @@
+Sending request to dump task 23216.
+
+
+----- pid 23216 at 2018-01-28 17:31:43 -----
+Cmd line: Link
+ABI: 'arm64'
+
+"Link" sysTid=23216
+  #00 pc 000000000006aad8  /system/lib64/libc.so (__connect+4)
+  #01 pc 00000000000010e8  /system/lib64/libnetd_client.so
+  #02 pc 000000000000af5c  /system/bin/Link
+  #03 pc 000000000000b068  /system/bin/Link
+  #04 pc 000000000000c46c  /system/bin/Link
+  #05 pc 00000000000074cc  /system/bin/Link
+  #06 pc 00000000000081e4  /system/bin/Link
+  #07 pc 0000000000006a28  /system/bin/Link
+  #08 pc 000000000001a594  /system/lib64/libc.so (__libc_init+88)
+  #09 pc 0000000000006938  /system/bin/Link
+
+"Binder:23216_1" sysTid=23217
+  #00 pc 000000000006abe0  /system/lib64/libc.so (__ioctl+4)
+  #01 pc 000000000001fab4  /system/lib64/libc.so (ioctl+140)
+  #02 pc 0000000000055458  /system/lib64/libbinder.so (_ZN7android14IPCThreadState14talkWithDriverEb+264)
+  #03 pc 00000000000555bc  /system/lib64/libbinder.so (_ZN7android14IPCThreadState20getAndExecuteCommandEv+24)
+  #04 pc 0000000000055cf4  /system/lib64/libbinder.so (_ZN7android14IPCThreadState14joinThreadPoolEb+72)
+  #05 pc 0000000000072aac  /system/lib64/libbinder.so
+  #06 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #07 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #08 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"UartLinkHandler" sysTid=23218
+  #00 pc 000000000001bcec  /system/lib64/libc.so (syscall+28)
+  #01 pc 0000000000067dec  /system/lib64/libc.so (pthread_cond_wait+96)
+  #02 pc 0000000000013154  /system/lib64/libstagefright_foundation.so (_ZN7android7ALooper4loopEv+336)
+  #03 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #04 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #05 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"Listener" sysTid=23219
+  #00 pc 000000000006aaf4  /system/lib64/libc.so (__epoll_pwait+8)
+  #01 pc 000000000001e1a4  /system/lib64/libc.so (epoll_pwait+64)
+  #02 pc 0000000000007110  /system/bin/Link
+  #03 pc 0000000000007218  /system/bin/Link
+  #04 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #05 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #06 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"UartLinkHandler" sysTid=23220
+  #00 pc 000000000001bcec  /system/lib64/libc.so (syscall+28)
+  #01 pc 0000000000067dec  /system/lib64/libc.so (pthread_cond_wait+96)
+  #02 pc 0000000000013154  /system/lib64/libstagefright_foundation.so (_ZN7android7ALooper4loopEv+336)
+  #03 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #04 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #05 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"Listener" sysTid=23221
+  #00 pc 000000000006aaf4  /system/lib64/libc.so (__epoll_pwait+8)
+  #01 pc 000000000001e1a4  /system/lib64/libc.so (epoll_pwait+64)
+  #02 pc 0000000000007110  /system/bin/Link
+  #03 pc 0000000000007218  /system/bin/Link
+  #04 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #05 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #06 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"UartLinkHandler" sysTid=23222
+  #00 pc 000000000001bcec  /system/lib64/libc.so (syscall+28)
+  #01 pc 0000000000067dec  /system/lib64/libc.so (pthread_cond_wait+96)
+  #02 pc 0000000000013154  /system/lib64/libstagefright_foundation.so (_ZN7android7ALooper4loopEv+336)
+  #03 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #04 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #05 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"Listener" sysTid=23223
+  #00 pc 000000000006aaf4  /system/lib64/libc.so (__epoll_pwait+8)
+  #01 pc 000000000001e1a4  /system/lib64/libc.so (epoll_pwait+64)
+  #02 pc 0000000000007110  /system/bin/Link
+  #03 pc 0000000000007218  /system/bin/Link
+  #04 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #05 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #06 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+"Binder:23216_2" sysTid=23224
+  #00 pc 000000000006abe0  /system/lib64/libc.so (__ioctl+4)
+  #01 pc 000000000001fab4  /system/lib64/libc.so (ioctl+140)
+  #02 pc 0000000000055458  /system/lib64/libbinder.so (_ZN7android14IPCThreadState14talkWithDriverEb+264)
+  #03 pc 00000000000555bc  /system/lib64/libbinder.so (_ZN7android14IPCThreadState20getAndExecuteCommandEv+24)
+  #04 pc 0000000000055cf4  /system/lib64/libbinder.so (_ZN7android14IPCThreadState14joinThreadPoolEb+72)
+  #05 pc 0000000000072aac  /system/lib64/libbinder.so
+  #06 pc 000000000001245c  /system/lib64/libutils.so (_ZN7android6Thread11_threadLoopEPv+272)
+  #07 pc 00000000000686bc  /system/lib64/libc.so (_ZL15__pthread_startPv+208)
+  #08 pc 000000000001da7c  /system/lib64/libc.so (__start_thread+16)
+
+----- end 23216 -----

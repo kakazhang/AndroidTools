@@ -1,0 +1,101 @@
+{
+    "uarts":
+    [
+        {
+            "type": "0",
+            "linkid": "0",
+            "default_forwardid":"2",
+            "forward_only":"0",
+			"enable":"0",
+            "dev_path":"/dev/ttyGS0",
+            "speed":"1500000",
+            "flow_ctrl":"2",
+            "data_bits":"8",
+            "stop_bits":"1",
+            "parity":"N",
+            "targets":
+            [
+               "10", "42","34"
+            ]
+
+        },
+        {
+            "type": "0",
+            "linkid": "1",
+            "default_forwardid":"0",
+            "forward_only":"0",
+			"enable":"0",
+            "dev_path":"/dev/ttyS4",
+            "speed":"1500000",
+            "flow_ctrl":"2",
+            "data_bits":"8",
+            "stop_bits":"1",
+            "parity":"N",
+            "targets":
+            [
+               "6"
+            ]
+
+        },
+        {
+            "type": "0",
+            "linkid": "5",
+            "default_forwardid":"4",
+            "forward_only":"1",
+			"enable":"0",
+            "dev_path":"/dev/ttyACM1",
+            "speed":"115200",
+            "flow_ctrl":"2",
+            "data_bits":"8",
+            "stop_bits":"1",
+            "parity":"N"
+        }
+    ],
+    "sockets":
+    [
+       {
+           "type":"1",
+           "linkid":"2",
+           "default_forwardid":"0",
+           "forward_only":"0",
+           "enable":"1",
+           "address":"192.168.42.2",
+           "port":"40004",
+           "targets":
+           [
+              "45","238", "14", "2"
+           ]
+       },
+       {
+           "type":"2",
+           "linkid":"3",
+           "default_forwardid":"0",
+           "forward_only":"0",
+           "enable":"1",
+           "address":"127.0.0.1",
+           "port":"40005",
+           "targets":
+           [
+               "34"
+           ]
+       },
+       {
+           "type":"2",
+           "linkid":"4",
+           "default_forwardid":"5",
+           "forward_only":"1",
+           "enable":"1",
+           "address":"127.0.0.1",
+           "port":"40006"
+       },
+       {
+           "type":"4",
+           "linkid":"6",
+           "default_forwardid":"4",
+           "forward_only":"0",
+           "enable":"1",
+           "address":"127.0.0.1",
+           "port":"90001"
+       }
+    ]
+}
